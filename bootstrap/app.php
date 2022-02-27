@@ -34,6 +34,7 @@ $app->withEloquent();
 $app->configure('api-config');
 $app->configure('jwt');
 $app->configure('auth');
+$app->configure('add-products');
 
 /*
 |--------------------------------------------------------------------------

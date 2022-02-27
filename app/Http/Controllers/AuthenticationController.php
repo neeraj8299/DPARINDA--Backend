@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\User;
+use App\Models\WishList;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -40,16 +43,26 @@ class AuthenticationController extends Controller
             'password' => 'required|alpha_num|min:6|max:16|confirmed',
         ]);
 
-        $user = new User;
+        DB::transaction(function () use ($request) {
+            $user = new User;
 
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->email = $request->email ?? null;
-        $user->phone_number = $request->phone_number;
-        $user->gender = $request->gender;
-        $user->password = Hash::make($request->password);
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
+            $user->email = $request->email ?? null;
+            $user->phone_number = $request->phone_number;
+            $user->gender = $request->gender;
+            $user->password = Hash::make($request->password);
 
-        $user->save();
+            $user->save();
+
+            Cart::create([
+                'user_id' => $user->id
+            ]);
+
+            WishList::create([
+                'user_id' => $user->id
+            ]);
+        });
 
         return response()->json([
             'message' => config('api-config.MESSAGES.SUCCESSFULLY_REGISTERED_USER')

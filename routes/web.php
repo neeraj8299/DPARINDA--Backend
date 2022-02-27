@@ -24,7 +24,7 @@ $router->post('send-otp', 'AuthenticationController@sendOtp');
 $router->post('reset-password', 'AuthenticationController@resetPassword');
 
 $router->group(['middleware' => ['auth']], function ($router) {
-    $router->group(['prefix' => 'product'], function ($router) {
+    $router->group(['prefix' => 'products'], function ($router) {
         $router->get('/', 'ProductController@getProductListing');
         $router->get('{id}', 'ProductController@getProductDetails');
     });
